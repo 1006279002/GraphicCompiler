@@ -10,18 +10,23 @@ import Main.Point;
 import Parser.Parser;
 import Parser.TreeNode;
 
+import java.awt.*;
+
 public class Semantic extends Parser {
 
-    public double Origin_x;    //origin的那两个值
+    //origin的那两个值
+    public double Origin_x;
     public double Origin_y;
-    public double Scale_x;      //Scale的那两个值
+    //Scale的那两个值
+    public double Scale_x;
     public double Scale_y;
-    public double rot_angle;    //rot的角度
+    //rot的角度
+    public double rot_angle;
     public Draw draw;
 
     public Semantic(Draw draw)
     {
-        super();                       //可有有无，继承类都会默认访问父类的无参构造函数，若父类有构造函数但不是无参的，则必须重写无参构造函数，否则报错
+        super();
         Origin_x = 0;
         Origin_y = 0;
         Scale_x = 1;
@@ -65,17 +70,21 @@ public class Semantic extends Parser {
         double x_temp;
         double y_val;
 
-        x_val = GetTreeValue(hor_ptr);   //计算点的原始坐标
+        //计算点的原始坐标
+        x_val = GetTreeValue(hor_ptr);
         y_val = GetTreeValue(ver_ptr);
 
-        x_val *= Scale_x;				//比列变换
+        //比列变换
+        x_val *= Scale_x;
         y_val *= Scale_y;
 
+        //旋转变换
         x_temp = x_val * Math.cos(rot_angle) + y_val * Math.sin(rot_angle);
         y_val = y_val * Math.cos(rot_angle) - x_val * Math.sin(rot_angle);
-        x_val = x_temp;                 //旋转变换
+        x_val = x_temp;
 
-        x_val += Origin_x;				//平移变换
+        //平移变换
+        x_val += Origin_x;
         y_val += Origin_y;
 
         point.setX(x_val);
@@ -167,5 +176,18 @@ public class Semantic extends Parser {
         DeleteTree(x_ptr);
         DeleteTree(y_ptr);
 
+    }
+
+    @Override
+    public void ColorStatement()
+    {
+        super.ColorStatement();
+        if(line_color == 0){
+            draw.setColor(Color.RED);
+        }else if (line_color == 1){
+            draw.setColor(Color.BLACK);
+        }else{
+            throw new RuntimeException("SyntaxError");
+        }
     }
 }

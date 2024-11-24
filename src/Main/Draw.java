@@ -25,8 +25,13 @@ public class Draw extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         g = this.getGraphics();
         g.translate(0,0);
-        g.setColor(Color.BLACK);
+        g.setColor(Color.RED);
         paintComponents(g);
+    }
+
+    public void setColor(Color color)
+    {
+        g.setColor(color);
     }
 
     public void draw(Point point)
