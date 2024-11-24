@@ -1,3 +1,8 @@
+/*
+参与者：高涵宸，胡景瑞
+类作用：处理语法树，计算坐标值，进行坐标变换，画出图形
+ */
+
 package Semantic;
 
 import Main.Draw;
@@ -7,8 +12,8 @@ import Parser.TreeNode;
 
 public class Semantic extends Parser {
 
-    public double Oringin_x;    //origin的那两个值
-    public double Oringin_y;
+    public double Origin_x;    //origin的那两个值
+    public double Origin_y;
     public double Scale_x;      //Scale的那两个值
     public double Scale_y;
     public double rot_angle;    //rot的角度
@@ -17,8 +22,8 @@ public class Semantic extends Parser {
     public Semantic(Draw draw)
     {
         super();                       //可有有无，继承类都会默认访问父类的无参构造函数，若父类有构造函数但不是无参的，则必须重写无参构造函数，否则报错
-        Oringin_x = 0;
-        Oringin_y = 0;
+        Origin_x = 0;
+        Origin_y = 0;
         Scale_x = 1;
         Scale_y = 1;
         rot_angle = 0;
@@ -54,7 +59,7 @@ public class Semantic extends Parser {
         }
     }
 
-    public void CalCoord(TreeNode hor_ptr, TreeNode ver_ptr, Point point) //计算点的坐标值：首先获取坐标值，然后进行坐标变换
+    public void CalCord(TreeNode hor_ptr, TreeNode ver_ptr, Point point) //计算点的坐标值：首先获取坐标值，然后进行坐标变换
     {
         double x_val;
         double x_temp;
@@ -70,8 +75,8 @@ public class Semantic extends Parser {
         y_val = y_val * Math.cos(rot_angle) - x_val * Math.sin(rot_angle);
         x_val = x_temp;                 //旋转变换
 
-        x_val += Oringin_x;				//平移变换
-        y_val += Oringin_y;
+        x_val += Origin_x;				//平移变换
+        y_val += Origin_y;
 
         point.setX(x_val);
         point.setY(y_val);
@@ -109,25 +114,18 @@ public class Semantic extends Parser {
 
         for(parameter.setA(start_val); parameter.getA() <= end_val; parameter.setA(parameter.getA() + step_val))
         {
-            CalCoord(x_ptr, y_ptr, point);  //计算当前点
+            CalCord(x_ptr, y_ptr, point);  //计算当前点
             draw.draw(point);   //画出当前点
         }
-
-//        JTextArea textField2 = new JTextArea("编辑");
-////        textField2.setBackground(Color.pink);
-//        textField2.setOpaque(false);
-//        textField2.setBounds((int)point.getX(), (int)point.getY(), 150, 20);
-//        draw.add(textField2);
-
     }
 
     @Override
     public void OriginStatement()
     {
         super.OriginStatement();
-        Oringin_x = GetTreeValue(x_ptr);
+        Origin_x = GetTreeValue(x_ptr);
         DeleteTree(x_ptr);
-        Oringin_y = GetTreeValue(y_ptr);
+        Origin_y = GetTreeValue(y_ptr);
         DeleteTree(y_ptr);
     }
 
@@ -152,9 +150,9 @@ public class Semantic extends Parser {
     @Override
     public void ForStatement()
     {
-        double start_val = 0;
-        double end_val = 0;
-        double step_val = 0;
+        double start_val;
+        double end_val;
+        double step_val;
         super.ForStatement();
 
         start_val = GetTreeValue(start_ptr);

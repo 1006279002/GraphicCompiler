@@ -1,3 +1,8 @@
+/*
+参与者：高涵宸，胡景瑞
+类作用：Parser类实现了ParserInterfaces接口，用于递归下降分析，生成语法树
+ */
+
 package Parser;
 
 import Scanner.Func;
@@ -7,24 +12,26 @@ import Scanner.Token_Type;
 
 public class Parser implements ParserInterfaces{
 
-    public CaseParmPtr parameter = new CaseParmPtr(0.0);   //参数T默认值为0
-	public int line_color = 0;
-	Token token;
-	public TreeNode start_ptr = new TreeNode();		//for
+    public CaseParamPtr parameter = new CaseParamPtr(0.0);   //参数T默认值为0
+	public int line_color = 0;									//线条颜色，默认为红色
+	Token token = new Token();									//一个空白记号
+	//for语句中的参数
+	public TreeNode start_ptr = new TreeNode();
 	public TreeNode end_ptr = new TreeNode();
 	public TreeNode step_ptr = new TreeNode();
-	public TreeNode x_ptr = new TreeNode();			//(x,y)
+	//(x,y)
+	public TreeNode x_ptr = new TreeNode();
 	public TreeNode y_ptr = new TreeNode();
-	public TreeNode angle_ptr = new TreeNode();		//angle
+	//旋转角度
+	public TreeNode angle_ptr = new TreeNode();
 
-	Scanner scanner;
 	public Parser()
 	{
-		scanner = new Scanner();
+		//默认构造函数
 	}
 
 	@Override
-	public void Parser(String file_name)		//程序入口
+	public void parser(String file_name)		//递归下降分析，真正的主程序
 	{
 		Enter("parser");
 		Scanner.init_scanner(file_name);
@@ -93,7 +100,6 @@ public class Parser implements ParserInterfaces{
                 break;
             case FUNC:
                 System.out.println("func");
-//            	System.out.println(root.case_func.func);
                 break;
             case CONST_ID:
                 System.out.println(root.case_const);
@@ -119,21 +125,17 @@ public class Parser implements ParserInterfaces{
         	PrintSyntaxTree(root.case_operator.left, height + 1);
         	PrintSyntaxTree(root.case_operator.right, height + 1);
         }
-
-        return;
 	}
 
-	/**
-	 * 进入递归下降分析
-	 */
+	//主要产生式的递归子程序，递归下降分析
 	@Override
 	public void Program()
 	{
 		Enter("program");
 		while(token.token_Type != Token_Type.NONTOKEN)
 		{
-			Statement();
-			MatchToken(Token_Type.SEMICO);
+			Statement();							//匹配语句
+			MatchToken(Token_Type.SEMICO);			//匹配分号
 		}
 		Exit("program");
 	}
@@ -161,7 +163,6 @@ public class Parser implements ParserInterfaces{
 			break;
 		default:
 			System.out.println("不存在该类型语句");
-//			SyntaxError(2);
 			break;
 		}
 		Exit("statement");
@@ -247,7 +248,7 @@ public class Parser implements ParserInterfaces{
 	@Override
 	public void ForStatement()				//匹配for语句
 	{
-		Enter("for_statment");
+		Enter("for_statement");
 		Match("FOR");
 		MatchToken(Token_Type.FOR);
 		Match("T");
@@ -364,7 +365,7 @@ public class Parser implements ParserInterfaces{
 	{
 		Token t = token;
 		TreeNode t_ptr = new TreeNode();
-		TreeNode tmp = new TreeNode();
+		TreeNode tmp;
 
 		switch (token.token_Type)
 		{
@@ -428,34 +429,34 @@ public class Parser implements ParserInterfaces{
 	}
 
 	@Override
-	public TreeNode MakeTreeNode(Token_Type token_Type, Func caseParmPtr, TreeNode value)
+	public TreeNode MakeTreeNode(Token_Type token_Type, Func caseParamPtr, TreeNode value)
 	{
 		TreeNode t = new TreeNode();
 		t.OpCode = token_Type;
 
-		t.case_func.func = caseParmPtr;
+		t.case_func.func = caseParamPtr;
 		t.case_func.child = value;
 		return t;
 	}
 
+	//进入提示符
 	@Override
 	public void Enter(String s)
 	{
 		System.out.println("Enter " + s);
-//		System.out.printf("%-10s %-6s\n","Enter",s);
 	}
 
+	//退出提示符
 	@Override
 	public void Exit(String s)
 	{
 		System.out.println("Exit " + s);
-//		System.out.printf("%-10s %-6s\n","Exit",s);
 	}
 
+	//匹配提示符
 	@Override
 	public void Match(String s)
 	{
 		System.out.println("MatchToken " + s);
-//		System.out.printf("%-10s %-6s\n","MatchToken",s);
 	}
 }
